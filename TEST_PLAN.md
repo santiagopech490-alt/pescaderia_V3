@@ -1,86 +1,80 @@
 # Plan de Pruebas y Estrategia de QA (OT-3)
 ## Proyecto: El Pulpazo - Sistema de Gestión de Restaurante
 
-Este documento establece la estrategia, el alcance y los casos de prueba para garantizar la calidad y correcto funcionamiento del sistema de "El Pulpazo".
+Este documento establece la estrategia y los casos de prueba para validar el funcionamiento integrado del sistema de "El Pulpazo" con el backend en la nube de Supabase.
 
 ---
 
 ## 1. Alcance de las Pruebas
 
-El objetivo es validar la funcionalidad, usabilidad y responsividad de todos los módulos del frontend interactivo de la aplicación.
+El objetivo es validar que la interfaz en React consuma, modifique y persista los datos de forma consistente en la base de datos de Supabase, respetando los roles del personal.
 
 ### Ambientes de Prueba
-* **Localhost:** `http://localhost:5173` (Desarrollo).
-* **Producción (Simulado):** GitHub Pages (Rama `gh-pages` / GitHub Actions).
-* **Dispositivos objetivo:** Computadoras de escritorio (Chrome, Firefox, Edge) y Tablets en modo horizontal.
+* **Desarrollo Local:** `http://localhost:5173/pescaderia_V3/`
+* **Base de datos:** Proyecto Supabase en la nube (`https://supabase.com`).
+* **Usuarios de Prueba:**
+  * **Administrador:** `admin@elpulpazo.com` (Contraseña: `admin123`)
+  * **Cajera:** `cajero@pulpazo.com` (Contraseña: `cajera123`)
+  * **Mesero:** `mesero@elpulpazo.com` (Contraseña: `mesero123`)
 
 ---
 
-## 2. Casos de Prueba (Checklist)
+## 2. Casos de Prueba (Checklist de Integración)
 
-### 2.1 Caso de Prueba 01: Módulo de Acceso (Login)
-* **Precondición:** El usuario se encuentra en la pantalla de inicio de sesión (`/`).
+### 2.1 Caso de Prueba 01: Autenticación y Roles Reales (Supabase Auth)
+* **Precondición:** El usuario se encuentra en la pantalla de inicio de sesión.
 * **Pasos de ejecución:**
-  1. Intentar hacer clic en "INICIAR SESIÓN" con los campos vacíos. (Esperado: Evitar el avance o solicitar datos).
-  2. Ingresar usuario `manager@elpulpazo.com` y contraseña `admin123`.
-  3. Activar la opción "Remember me" (Recordar contraseña).
-  4. Presionar el botón de visualización de contraseña (ojo) para revelar el texto.
-  5. Hacer clic en "INICIAR SESIÓN".
-* **Resultado Esperado:** Redirección automática a la vista del mapa de mesas (`/dashboard/mapa-mesas`).
+  1. Ingresar las credenciales de Mesero: `mesero@elpulpazo.com` / `mesero123`.
+  2. Presionar el botón "INICIAR SESIÓN".
+  3. Verificar el Header superior. (Esperado: Se visualiza el nombre del mesero y sus iniciales, y no aparece la opción de "Inventario" o "Dashboard Ejecutivo" en el menú).
+  4. Cerrar sesión y repetir los pasos con la cuenta de Administrador: `admin@elpulpazo.com` / `admin123`.
+* **Resultado Esperado:** Redirección exitosa, despliegue del nombre de usuario real leído desde la base de datos y ocultamiento/activación de vistas según los permisos del rol.
 
-### 2.2 Caso de Prueba 02: Plano de Mesas y Reservas
-* **Precondición:** El usuario ha iniciado sesión y se encuentra en `/dashboard/mapa-mesas`.
+### 2.2 Caso de Prueba 02: Persistencia del Plano de Mesas
+* **Precondición:** Iniciar sesión como Administrador. Ir a `/dashboard/mapa-mesas`.
 * **Pasos de ejecución:**
-  1. Seleccionar la mesa `A1` (Libre). (Esperado: Se abre el panel lateral de detalles de mesa).
-  2. Hacer clic en "Reservar Mesa". (Esperado: El estado e indicador de color de la mesa cambia a Naranja/Reservado).
-  3. Seleccionar la mesa `A2` (Ocupada). (Esperado: El panel muestra la comanda activa y el tiempo transcurrido).
-  4. Activar el **Modo Edición** mediante el botón de la barra superior.
-  5. Intentar arrastrar la mesa `B1` a otra posición. (Esperado: La mesa se desplaza suavemente al arrastrarla).
-  6. Hacer clic en "+ Agregar Mesa". (Esperado: Se crea una nueva mesa circular en el mapa con identificador secuencial).
-  7. Desactivar el Modo Edición. (Esperado: Se guardan las posiciones y ya no se pueden mover al arrastrarlas).
+  1. Activar el **Modo Edición** mediante el botón superior "Editar Mesas".
+  2. Agregar una mesa nueva haciendo clic en "+ Agregar Mesa".
+  3. Arrastrar la nueva mesa a la posición central `(X: 450, Y: 220)`.
+  4. Seleccionar la mesa en el panel lateral y cambiar su rotación a `45°`.
+  5. Desactivar el Modo Edición ("Salir de Edición").
+  6. Recargar la página en el navegador (`F5`).
+* **Resultado Esperado:** Al recargar la página, la mesa agregada debe seguir apareciendo en el mapa en la misma posición y rotación configuradas, demostrando la persistencia exitosa en la tabla `app_mesas` de Supabase.
 
-### 2.3 Caso de Prueba 03: Toma de Pedidos (Menú y Carrito)
-* **Precondición:** Estar en la vista de menú de cliente (`/dashboard/cliente-menu`).
+### 2.3 Caso de Prueba 03: Flujo de Pedidos y Ticket con IVA (Checkout)
+* **Precondición:** Iniciar sesión y agregar platillos al carrito. Ir a `/dashboard/carrito`.
 * **Pasos de ejecución:**
-  1. Filtrar el menú seleccionando la categoría "Bebidas". (Esperado: Solo se muestran bebidas en pantalla).
-  2. Escribir "Ceviche" en la barra de búsqueda superior. (Esperado: Se filtra y solo se visualizan los platillos que contengan "Ceviche").
-  3. Presionar "+ Agregar" en "Ceviche Mixto" dos veces.
-  4. Ir a la vista del carrito (`/dashboard/carrito`).
-  5. Aumentar la cantidad del plato a 3. (Esperado: El total se recalcula correctamente).
-  6. Seleccionar la mesa `A1` en el dropdown de mesa.
-  7. Seleccionar método de pago "Efectivo".
-  8. Hacer clic en "Confirmar Pedido".
-* **Resultado Esperado:** Mensaje de confirmación (toast o alerta de éxito), carrito vacío y redirección o actualización de la mesa asignada a estado "Ocupada".
+  1. Seleccionar la Mesa `A1` y establecer el método de pago (Efectivo o Tarjeta).
+  2. Verificar los cálculos numéricos. (Esperado: Se muestra el desglose del Subtotal, el cálculo del IVA del 16% sobre el subtotal, y el Total sumado correctamente).
+  3. Hacer clic en "Proceder al Pago" y confirmar el pedido.
+  4. Revisar la pantalla "Esperando Ticket de Compra". (Esperado: Se muestra el folio único autogenerado y el ticket detallado).
+  5. Hacer clic en "Entregar Ticket y Regresar".
+  6. Ir al módulo de **Historial** y verificar la orden.
+* **Resultado Esperado:** La comanda se guarda en la tabla `app_pedidos` y limpia el carrito al regresar. La mesa `A1` cambia automáticamente a color rojo (Ocupado).
 
-### 2.4 Caso de Prueba 04: Administración del Menú (CRUD)
-* **Precondición:** Estar en `/dashboard/admin` (Panel de Administración).
+### 2.4 Caso de Prueba 04: Inventario y Alertas de Stock
+* **Precondición:** Ir a la vista de `/dashboard/inventario`.
 * **Pasos de ejecución:**
-  1. Desactivar el interruptor de "Disponible" para el platillo "Pay de Limón". (Esperado: El platillo debe aparecer como "Agotado" en la vista del cliente).
-  2. Activar la opción "Recomendado" para "Cóctel de Camarón". (Esperado: Se muestra con estrella o destaque visual).
-  3. Hacer clic en "Nuevo Platillo".
-  4. Llenar el formulario con datos de prueba (Nombre: "Tacos Gobernador", Precio: 120, Categoría: Platos Fuertes).
-  5. Hacer clic en "Guardar".
-* **Resultado Esperado:** El nuevo platillo se muestra al final de la lista del panel y está disponible en la vista de cliente.
+  1. Buscar el ingrediente "Sal de Grano". (Esperado: Muestra stock actual inferior al mínimo y una alerta roja de "Bajo Stock").
+  2. Hacer clic en editar el insumo y modificar el stock actual a un valor superior al mínimo. Guardar cambios.
+  3. Verificar que la alerta roja cambie a verde ("Saludable").
+  4. Recargar la página.
+* **Resultado Esperado:** Los valores actualizados del inventario se leen de forma persistente desde Supabase.
 
-### 2.5 Caso de Prueba 05: Inventario de Insumos
-* **Precondición:** Estar en `/dashboard/inventario`.
+### 2.5 Caso de Prueba 05: Tema y Respaldo Local (JSON)
+* **Precondición:** Ir a cualquier sección del Dashboard.
 * **Pasos de ejecución:**
-  1. Buscar el ingrediente "Camarón". (Esperado: Muestra stock actual de 15 kg y mínimo de 20 kg en color rojo de alerta).
-  2. Editar el insumo para aumentar el stock a 25 kg.
-* **Resultado Esperado:** Al guardar, la alerta roja desaparece porque el stock actual supera el mínimo configurado.
-
-### 2.6 Caso de Prueba 06: Dashboard y Analítica
-* **Precondición:** Estar en `/dashboard/dashboard-ejecutivo`.
-* **Pasos de ejecución:**
-  1. Visualizar las tarjetas superiores de KPI (Ventas, Pedidos, Margen, Ocupación).
-  2. Posicionar el cursor sobre la gráfica de línea de "Ventas por hora".
-* **Resultado Esperado:** Se despliega un *tooltip* interactivo con la hora y el monto de venta exacto.
+  1. Hacer clic en el interruptor de Tema en el Header. (Esperado: La aplicación cambia a tema claro con colores claros legibles).
+  2. Recargar la página. (Esperado: El navegador recuerda y aplica el tema claro desde `localStorage`).
+  3. Ir a la administración e interactuar con el módulo de Respaldo Local.
+  4. Hacer clic en "Exportar Datos". (Esperado: Se descarga un archivo `.json` con el volcado actual de las tablas).
+* **Resultado Esperado:** Persistencia del tema clara/oscura y correcto funcionamiento de la descarga del JSON de respaldo.
 
 ---
 
 ## 3. Criterios de Aceptación para Liberación
 
-1. **Compilación sin errores:** `npm run build` debe completarse de forma exitosa en el pipeline de CI/CD.
-2. **Pruebas Críticas Aprobadas:** 100% de éxito en los flujos de Login, Creación de pedidos y Mapa de mesas.
-3. **Cero errores en consola:** No deben registrarse warnings críticos o errores de React en la consola del desarrollador.
-4. **Diseño Adaptable:** El diseño debe mantener su integridad estética sin desbordamientos de texto en resoluciones de Tablet (1024x768) y Desktop (1920x1080).
+1. **Conexión Exitosa con Supabase:** La aplicación debe leer y escribir información en la base de datos sin errores de CORS o conexión.
+2. **Control de Acceso (Auth):** Ningún usuario no autenticado puede entrar a las vistas protegidas (`/dashboard/*`).
+3. **Cálculo de IVA Exacto:** La suma matemática en el checkout y ticket digital debe ser exacta: `Total = Subtotal * 1.16`.
+4. **Persistencia Total:** Los cambios en las mesas (posición, tamaño), platillos e inventario deben sobrevivir a una recarga de la página (`F5`).

@@ -3,17 +3,34 @@ import { useNavigate } from "react-router";
 import { User, Lock, ArrowRight, Facebook, Instagram, Eye, EyeOff } from "lucide-react";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 import logoImg from "@/imports/image.png";
+import { supabase } from "@/lib/supabase";
 
 export default function Login() {
   const navigate = useNavigate();
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [remember, setRemember] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    const { error: authError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (authError) {
+      setError("Correo o contraseña incorrectos");
+      setLoading(false);
+      return;
+    }
+
     navigate("/dashboard/mapa-mesas");
+    setLoading(false);
   };
 
   return (
@@ -23,7 +40,6 @@ export default function Login() {
         background: "radial-gradient(ellipse at 60% 40%, #1a1500 0%, #0d0d0d 55%, #080808 100%)",
       }}
     >
-      {/* Subtle noise texture overlay */}
       <div
         className="absolute inset-0 opacity-[0.03] pointer-events-none"
         style={{
@@ -33,7 +49,6 @@ export default function Login() {
         }}
       />
 
-      {/* Glass card */}
       <div
         className="relative w-full max-w-md rounded-2xl px-10 py-10"
         style={{
@@ -61,31 +76,37 @@ export default function Login() {
           <p className="text-sm tracking-wider text-gray-400 mt-1">Management System Access</p>
         </div>
 
+        {/* Error */}
+        {error && (
+          <div className="mb-4 px-4 py-2.5 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-xs text-center">
+            {error}
+          </div>
+        )}
+
         {/* Form */}
         <form onSubmit={handleLogin} className="space-y-5 mt-8">
-          {/* Username */}
           <div>
             <label className="block text-[10px] tracking-[0.18em] text-gray-400 uppercase mb-2">
-              Username or Email
+              Correo Electrónico
             </label>
             <div className="relative">
               <div className="absolute left-4 top-1/2 -translate-y-1/2">
                 <User className="w-4 h-4 text-[#D4AF37]" strokeWidth={1.5} />
               </div>
               <input
-                type="text"
-                placeholder="manager@elpulpazo.com"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                type="email"
+                required
+                placeholder="admin@elpulpazo.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full bg-[#0d0d0d]/60 border border-[#D4AF37]/25 rounded-lg py-3.5 pl-11 pr-4 text-white placeholder:text-gray-600 text-sm focus:outline-none focus:border-[#D4AF37]/70 transition-colors"
               />
             </div>
           </div>
 
-          {/* Password */}
           <div>
             <label className="block text-[10px] tracking-[0.18em] text-gray-400 uppercase mb-2">
-              Password
+              Contraseña
             </label>
             <div className="relative">
               <div className="absolute left-4 top-1/2 -translate-y-1/2">
@@ -93,6 +114,7 @@ export default function Login() {
               </div>
               <input
                 type={showPassword ? "text" : "password"}
+                required
                 placeholder="••••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -103,70 +125,22 @@ export default function Login() {
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#D4AF37] transition-colors"
               >
-                {showPassword ? (
-                  <EyeOff className="w-4 h-4" strokeWidth={1.5} />
-                ) : (
-                  <Eye className="w-4 h-4" strokeWidth={1.5} />
-                )}
+                {showPassword ? <EyeOff className="w-4 h-4" strokeWidth={1.5} /> : <Eye className="w-4 h-4" strokeWidth={1.5} />}
               </button>
             </div>
           </div>
 
-          {/* Remember me + Forgot */}
-          <div className="flex items-center justify-between pt-1">
-            <label className="flex items-center gap-2 cursor-pointer group">
-              <div
-                onClick={() => setRemember(!remember)}
-                className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
-                  remember
-                    ? "bg-[#D4AF37] border-[#D4AF37]"
-                    : "border-[#D4AF37]/40 bg-transparent group-hover:border-[#D4AF37]/70"
-                }`}
-              >
-                {remember && (
-                  <svg viewBox="0 0 10 8" className="w-2.5 h-2.5" fill="none">
-                    <path d="M1 4l3 3 5-6" stroke="#0d0d0d" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                )}
-              </div>
-              <span className="text-xs text-gray-400">Remember me</span>
-            </label>
-            <button type="button" className="text-xs text-[#D4AF37] hover:text-[#F4D03F] transition-colors">
-              Forgot password?
-            </button>
-          </div>
-
-          {/* Submit */}
           <button
             type="submit"
-            className="w-full bg-[#D4AF37] hover:bg-[#C9A830] text-black py-3.5 rounded-lg flex items-center justify-center gap-3 transition-all duration-300 group mt-2"
+            disabled={loading}
+            className="w-full bg-[#D4AF37] hover:bg-[#C9A830] disabled:bg-gray-600 text-black py-3.5 rounded-lg flex items-center justify-center gap-3 transition-all duration-300 group mt-2"
           >
-            <span className="tracking-[0.18em] text-sm font-semibold">INICIAR SESIÓN</span>
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <span className="tracking-[0.18em] text-sm font-semibold">
+              {loading ? "INICIANDO..." : "INICIAR SESIÓN"}
+            </span>
+            {!loading && <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />}
           </button>
         </form>
-
-        {/* Divider */}
-        <div className="mt-8">
-          <div className="relative flex items-center justify-center">
-            <div className="flex-1 border-t border-gray-700/60" />
-            <span className="px-4 text-[10px] tracking-[0.18em] text-gray-500 uppercase whitespace-nowrap">
-              Or Continue With
-            </span>
-            <div className="flex-1 border-t border-gray-700/60" />
-          </div>
-
-          <div className="flex gap-4 mt-5">
-            <button className="flex-1 bg-[#0d0d0d]/60 hover:bg-[#1a1a1a] border border-[#D4AF37]/20 hover:border-[#D4AF37]/40 py-3 rounded-lg flex items-center justify-center gap-2.5 transition-colors group">
-              <Facebook className="w-4 h-4 text-[#D4AF37]" strokeWidth={1.5} />
-              <span className="text-sm text-gray-300">Facebook</span>
-            </button>
-            <button className="flex-1 bg-[#0d0d0d]/60 hover:bg-[#1a1a1a] border border-[#D4AF37]/20 hover:border-[#D4AF37]/40 py-3 rounded-lg flex items-center justify-center gap-2.5 transition-colors group">
-              <Instagram className="w-4 h-4 text-[#D4AF37]" strokeWidth={1.5} />
-              <span className="text-sm text-gray-300">Instagram</span>
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );
