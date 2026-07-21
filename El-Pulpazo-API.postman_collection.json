@@ -1,0 +1,208 @@
+{
+	"info": {
+		"_postman_id": "b1b84920-5627-4c2c-8d9e-a6122d26f63a",
+		"name": "El Pulpazo API - Supabase",
+		"description": "Colección de peticiones para probar e integrar los endpoints de la base de datos de El Pulpazo en Supabase.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Autenticación",
+			"item": [
+				{
+					"name": "Iniciar Sesión (Email/Password)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "apikey",
+								"value": "{{SUPABASE_ANON_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"admin@elpulpazo.com\",\n  \"password\": \"admin123\"\n}"
+						},
+						"url": {
+							"raw": "{{SUPABASE_URL}}/auth/v1/token?grant_type=password",
+							"protocol": "{{SUPABASE_URL}}",
+							"path": [
+								"auth",
+								"v1",
+								"token"
+							],
+							"query": [
+								{
+									"key": "grant_type",
+									"value": "password"
+								}
+							]
+						},
+						"description": "Autentica un usuario en Supabase Auth y devuelve el token JWT (access_token) y metadatos de rol."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Mesas",
+			"item": [
+				{
+					"name": "Obtener Mesas",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "apikey",
+								"value": "{{SUPABASE_ANON_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{USER_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{SUPABASE_URL}}/rest/v1/app_mesas?select=*",
+							"protocol": "{{SUPABASE_URL}}",
+							"path": [
+								"rest",
+								"v1",
+								"app_mesas"
+							],
+							"query": [
+								{
+									"key": "select",
+									"value": "*"
+								}
+							]
+						},
+						"description": "Obtiene la lista actual de mesas con sus posiciones del plano, tipo y estados de ocupación."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Platillos",
+			"item": [
+				{
+					"name": "Obtener Menú Completo",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "apikey",
+								"value": "{{SUPABASE_ANON_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{SUPABASE_URL}}/rest/v1/app_platillos?select=*",
+							"protocol": "{{SUPABASE_URL}}",
+							"path": [
+								"rest",
+								"v1",
+								"app_platillos"
+							],
+							"query": [
+								{
+									"key": "select",
+									"value": "*"
+								}
+							]
+						},
+						"description": "Devuelve la carta completa de platillos disponibles y recomendados."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Inventario",
+			"item": [
+				{
+					"name": "Obtener Insumos",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "apikey",
+								"value": "{{SUPABASE_ANON_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{USER_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{SUPABASE_URL}}/rest/v1/app_insumos?select=*",
+							"protocol": "{{SUPABASE_URL}}",
+							"path": [
+								"rest",
+								"v1",
+								"app_insumos"
+							],
+							"query": [
+								{
+									"key": "select",
+									"value": "*"
+								}
+							]
+						},
+						"description": "Obtiene el listado de insumos con stock disponible y stock mínimo de alerta."
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.test(\"Petición exitosa (Código HTTP 200 o 201)\", function () {",
+					"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+					"});"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "SUPABASE_URL",
+			"value": "https://tu-proyecto.supabase.co",
+			"type": "string"
+		},
+		{
+			"key": "SUPABASE_ANON_KEY",
+			"value": "tu-anon-key",
+			"type": "string"
+		},
+		{
+			"key": "USER_TOKEN",
+			"value": "jwt-token-aqui",
+			"type": "string"
+		}
+	]
+}
