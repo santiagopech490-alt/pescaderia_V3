@@ -31,8 +31,8 @@ La aplicación de React valida los roles leyendo los metadatos del usuario auten
 
 1. Ve a la sección **Authentication** → **Users** → **Add user** → **Create user**.
 2. Registra los siguientes usuarios con sus respectivas contraseñas:
-   * **Administrador:** `admin@elpulpazo.com` / `admin123`
-   * **Cajera:** `cajero@pulpazo.com` / `cajera123`
+   * **Administrador:** `admin@elpulpazo.com` / `admin@elpulpazo`
+   * **Cajera / Cajero:** `Cajero@Pulpazo.com` / `Cajero`
    * **Mesero:** `mesero@elpulpazo.com` / `mesero123`
 3. En la configuración de cada usuario (o mediante el script [fix_user_metadata.sql](file:///c:/Users/santi/Downloads/pescaderia%20%281%29/pescaderia_V3/supabase/fix_user_metadata.sql)), define los metadatos correspondientes de esta manera:
    ```json

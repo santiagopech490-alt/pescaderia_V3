@@ -57,7 +57,7 @@
 | **Navegador Web:** | Google Chrome v100+, Microsoft Edge v100+, Safari v15+ o Mozilla Firefox v100+. |
 | **Sistema Operativo:** | Windows 10/11, macOS, Linux, Android (Tablet/Celular) o iOS/iPadOS. |
 | **Conexión a Internet:** | Estable (Mínimo 2 Mbps) para sincronización en la nube con Supabase. |
-| **Permisos de Cuenta:** | Credenciales de usuario asignadas por el Administrador. |
+| **Permisos de Cuenta:** | 🔑 Credenciales de Prueba por Defecto:<br>- **Administrador:** `admin@elpulpazo.com` / Contraseña: `admin@elpulpazo`<br>- **Cajera / Cajero:** `Cajero@Pulpazo.com` / Contraseña: `Cajero`<br>- **Mesero:** `mesero@elpulpazo.com` / Contraseña: `mesero123` |
 
 ---
 
@@ -102,11 +102,11 @@ El sistema cuenta con una interfaz limpia en modo oscuro con acentos dorados (`#
 
 ## 8. Roles y Perfiles de Usuario
 
-| Rol | Vistas Visibles | Permisos y Capacidades |
-| :--- | :--- | :--- |
-| **👑 Administrador** | *Todas las pantallas* | Control total. Puede editar el mapa de mesas (mover/redimensionar), agregar platillos, ajustar inventario, ver métricas financieras y exportar respaldos. |
-| **💵 Cajera** | *Mesas, Pedidos, Carrito, Inventario* | Procesar cobros de comandas, calcular cambio/IVA, emitir tickets digitales, registrar gastos/abonos y consultar el stock. |
-| **🍽️ Mesero** | *Mesas, Menú, Carrito* | Consultar disponibilidad de mesas, tomar pedidos en el menú digital y enviar la comanda al carrito. |
+| Rol | Correo de Acceso | Contraseña | Vistas Visibles | Permisos y Capacidades |
+| :--- | :--- | :--- | :--- | :--- |
+| **👑 Administrador** | `admin@elpulpazo.com` | `admin@elpulpazo` | *Todas las pantallas* | Control total. Puede editar el mapa de mesas (mover/redimensionar), agregar platillos, ajustar inventario, ver métricas financieras y exportar respaldos. |
+| **💵 Cajera / Cajero** | `Cajero@Pulpazo.com` | `Cajero` | *Mesas, Pedidos, Carrito, Inventario* | Procesar cobros de comandas, calcular cambio/IVA, emitir tickets digitales, registrar gastos/abonos y consultar el stock. |
+| **🍽️ Mesero** | `mesero@elpulpazo.com` | `mesero123` | *Mesas, Menú, Carrito* | Consultar disponibilidad de mesas, tomar pedidos en el menú digital y enviar la comanda al carrito. |
 
 ---
 

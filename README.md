@@ -74,8 +74,8 @@ Abre http://localhost:5173/pescaderia_V3/
 
 | Rol | Email | Contrasena |
 |-----|-------|------------|
-| Administrador | admin@elpulpazo.com | admin123 |
-| Cajera | cajero@pulpazo.com | cajera123 |
+| Administrador | admin@elpulpazo.com | admin@elpulpazo |
+| Cajera / Cajero | Cajero@Pulpazo.com | Cajero |
 | Mesero | mesero@elpulpazo.com | mesero123 |
 
 ---

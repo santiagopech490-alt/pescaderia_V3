@@ -13,8 +13,8 @@ El objetivo es validar que la interfaz en React consuma, modifique y persista lo
 * **Desarrollo Local:** `http://localhost:5173/pescaderia_V3/`
 * **Base de datos:** Proyecto Supabase en la nube (`https://supabase.com`).
 * **Usuarios de Prueba:**
-  * **Administrador:** `admin@elpulpazo.com` (Contraseña: `admin123`)
-  * **Cajera:** `cajero@pulpazo.com` (Contraseña: `cajera123`)
+  * **Administrador:** `admin@elpulpazo.com` (Contraseña: `admin@elpulpazo`)
+  * **Cajera / Cajero:** `Cajero@Pulpazo.com` (Contraseña: `Cajero`)
   * **Mesero:** `mesero@elpulpazo.com` (Contraseña: `mesero123`)
 
 ---
