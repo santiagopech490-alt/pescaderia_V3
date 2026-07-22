@@ -15,7 +15,6 @@
    - [3.6 Mantenimiento de Platillos (Panel Admin)](#36-mantenimiento-de-platillos-panel-admin)
 4. [Herramientas Adicionales](#4-herramientas-adicionales)
 5. [Preguntas Frecuentes y Solución de Problemas](#5-preguntas-frecuentes-y-solución-de-problemas)
-6. [Guía de Carga y Consulta en OneDrive](#6-guía-de-carga-y-consulta-en-onedrive)
 
 ---
 
@@ -156,21 +155,3 @@ Panel financiero para la toma de decisiones.
   No. En la versión actual V3, las posiciones, tamaños y rotaciones se guardan de forma permanente en la base de datos de Supabase.
 * **¿Cómo entrego un ticket al cliente?**
   Al presionar "Proceder al Pago", el sistema muestra el Ticket Digital con su folio. Puedes imprimirlo o mostrarlo en pantalla.
-
----
-
-## 6. Guía de Carga y Consulta en OneDrive
-
-Para compartir este manual institucionalmente a través de **OneDrive**, sigue estos 3 simples pasos:
-
-1. **Localizar el archivo en Word (`.docx`):**
-   Abre la carpeta del proyecto en tu computadora:
-   `C:\Users\santi\Downloads\pescaderia (1)\pescaderia_V3\MANUAL_DEL_USUARIO.docx`
-2. **Subir a OneDrive:**
-   - Abre tu navegador de internet y entra a [onedrive.live.com](https://onedrive.live.com) o al OneDrive de tu institución educativa.
-   - Inicia sesión con tu correo.
-   - Arrastra el archivo **`MANUAL_DEL_USUARIO.docx`** dentro de la ventana de OneDrive.
-3. **Generar Enlace de Consulta Pública:**
-   - Una vez subido, haz clic derecho sobre el archivo en OneDrive y selecciona **`Compartir`** (Share).
-   - Asegúrate de cambiar los permisos a **"Cualquier persona con el enlace puede ver"** (Anyone with the link can view).
-   - Haz clic en **`Copiar enlace`** (Copy link) y pégalo en el documento o tarea de tu asignatura.
