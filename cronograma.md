@@ -2,6 +2,8 @@
 
 Este documento resume el progreso y distribución de tareas del proyecto al **23 de julio de 2026**.
 
+![Vista Kanban del Cronograma del Proyecto](file:///c:/Users/santi/Downloads/pescaderia%20%281%29/pescaderia_V3/evidencias_screenshots/cronograma_notion.png)
+
 ## Resumen del Progreso
 
 | Módulo / Categoría | Completados | En Proceso | Pendientes | Total Tareas | % Completado |
