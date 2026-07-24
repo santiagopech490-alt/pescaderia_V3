@@ -1,90 +1,73 @@
-# Manual Técnico y Guía de Usuario (OT-5)
-## Proyecto: El Pulpazo - Sistema de Gestión de Restaurante
+# Manual Técnico y Guía de Instalación (OT-5 - Versión 3.1)
+## Proyecto: El Pulpazo - Sistema de Gestión de Restaurante y Marisquería
 
-Este manual contiene las especificaciones técnicas para configurar el backend de base de datos en la nube (Supabase), así como la guía de operación para el personal del restaurante "El Pulpazo".
+Este manual contiene las especificaciones técnicas para configurar el backend en Supabase, los scripts SQL v3.1 y la guía de operación para los 4 roles del personal.
 
 ---
 
-## PARTE 1: Manual Técnico (Desarrolladores y Administradores)
+## PARTE 1: Manual Técnico y Base de Datos
 
 ### 1. Requisitos del Entorno
 * **Node.js:** Versión 18 o superior (Recomendado v20+).
-* **Gestor de paquetes:** `npm` (incluido con Node.js).
-* **Base de datos:** Cuenta gratuita en **Supabase** (`supabase.com`).
+* **Python:** Versión 3.12 (con `pytest` y `requests` instalados).
+* **Base de Datos:** Proyecto en la nube en **Supabase** (PostgreSQL).
 
-### 2. Configuración de la Base de Datos en Supabase
+### 2. Configuración de Tablas SQL en Supabase (v3.1)
 
-Sigue estos pasos para levantar la base de datos PostgreSQL en la nube:
+Para levantar la base de datos completa de v3.1, ejecuta en el **SQL Editor** de Supabase los siguientes scripts ubicados en la carpeta `supabase/`:
 
-1. **Crear Proyecto:**
-   * Entra a [supabase.com](https://supabase.com) y crea un nuevo proyecto llamado `el-pulpazo`.
-2. **Ejecutar el Esquema e Inicializar Datos:**
-   * Ve a la sección **SQL Editor** en el panel izquierdo de Supabase y haz clic en **New Query**.
-   * Abre y copia el contenido del archivo [app_tables.sql](file:///c:/Users/santi/Downloads/pescaderia%20%281%29/pescaderia_V3/supabase/app_tables.sql). Pégalo en el editor de Supabase y presiona **Run**. (Esto creará las tablas `app_*` y cargará los registros iniciales de mesas, platillos, clientes e insumos).
-   * *(Opcional)* Si deseas implementar el esquema robusto relacional completo original (de 17 tablas), puedes ejecutar de la misma manera el script [schema.sql](file:///c:/Users/santi/Downloads/pescaderia%20%281%29/pescaderia_V3/supabase/schema.sql).
-3. **Deshabilitar RLS para Pruebas Rápidas:**
-   * Ejecuta el script [fix_rls.sql](file:///c:/Users/santi/Downloads/pescaderia%20%281%29/pescaderia_V3/supabase/fix_rls.sql) en el SQL Editor para deshabilitar las políticas de seguridad por fila si deseas interactuar sin restricciones de sesión durante tus pruebas de desarrollo local.
-
-### 3. Configuración de Usuarios y Roles
-
-La aplicación de React valida los roles leyendo los metadatos del usuario autenticado de Supabase Auth:
-
-1. Ve a la sección **Authentication** → **Users** → **Add user** → **Create user**.
-2. Registra los siguientes usuarios con sus respectivas contraseñas:
-   * **Administrador:** `admin@elpulpazo.com` / `admin@elpulpazo`
-   * **Cajera / Cajero:** `Cajero@Pulpazo.com` / `Cajero`
-   * **Mesero:** `mesero@elpulpazo.com` / `mesero123`
-3. En la configuración de cada usuario (o mediante el script [fix_user_metadata.sql](file:///c:/Users/santi/Downloads/pescaderia%20%281%29/pescaderia_V3/supabase/fix_user_metadata.sql)), define los metadatos correspondientes de esta manera:
-   ```json
-   {
-     "full_name": "Nombre de Usuario",
-     "role": "administrador"  // O "cajera" / "mesero"
-   }
-   ```
-
-### 4. Variables de Entorno y Configuración Local
-1. En la raíz de tu proyecto local, crea un archivo llamado `.env` copiando el contenido de `.env.example`:
-   ```env
-   VITE_SUPABASE_URL=https://TU-PROYECTO.supabase.co
-   VITE_SUPABASE_ANON_KEY=tu-anon-key
-   ```
-2. Reemplaza los valores con la URL de tu proyecto y la Anon Key de API (disponibles en Supabase en **Project Settings** → **API**).
-3. En tu terminal local, instala las dependencias y ejecuta el proyecto:
-   ```bash
-   npm install
-   npm run dev
-   ```
-   * *La aplicación estará disponible localmente en `http://localhost:5173/pescaderia_V3/`.*
+1. **`app_tables.sql`:** Crea las tablas de la aplicación (`app_platillos`, `app_mesas`, `app_pedidos`, `app_insumos`, `app_clientes`, `app_gastos`, `app_abonos`).
+2. **`app_recetas.sql`:** Crea la tabla de recetas para vincular ingredientes y platillos con cantidades de consumo.
+3. **`app_descuentos.sql`:** Crea la tabla de cupones de descuento (% y monto fijo).
+4. **`app_notificaciones.sql`:** Crea la tabla de notificaciones flotantes del sistema.
+5. **`app_repartidores.sql` y `app_entregas_repartidor.sql`:** Registro de logística a domicilio.
+6. **`app_cortes.sql`:** Registro de cortes de caja diarios.
+7. **`enable_rls_by_role.sql`:** Habilita las políticas Row Level Security (RLS) para los 4 roles.
 
 ---
 
-## PARTE 2: Guía de Operación (Personal del Restaurante)
+### 3. Configuración de los 4 Roles de Usuario (Supabase Auth)
 
-### 1. Acceso al Sistema (Login)
-* Ingresa con tu correo registrado y tu contraseña operativa.
-* El sistema te asignará automáticamente tu perfil (Administrador, Cajera o Mesero) y personalizará el menú lateral de acuerdo con tus permisos.
+En la sección **Authentication** → **Users** de Supabase, crea los siguientes usuarios con sus metadatos de rol:
 
-### 2. Gestión de Mesas
-* **Reservas:** Selecciona una mesa de color verde (Libre) y haz clic en "Reservar Mesa" en el panel lateral. Cambiará a color naranja.
-* **Cobro y Liberación:** Cuando la comanda de una mesa de color rojo (Ocupado) se pague, haz clic en "Liberar Mesa". Cambiará automáticamente a color verde y estará disponible para nuevos comensales.
-* **Mover y Editar Mesas (Administrador):**
-  * Activa el interruptor "Editar Mesas" en la barra superior.
-  * Arrastra las mesas en pantalla para acomodarlas a la distribución del comedor.
-  * Ajusta su forma (rectangular/circular), tamaño o rotación desde el panel derecho.
-  * Al hacer clic en "Salir de Edición", las ubicaciones y rotaciones se guardarán de forma permanente en la base de datos de Supabase.
+| Rol Operativo | Email | Contraseña | Metadatos de Usuario (`user_metadata`) |
+| :--- | :--- | :--- | :--- |
+| **Administrador** | `admin@elpulpazo.com` | `admin@elpulpazo` | `{"full_name": "Administrador", "role": "administrador"}` |
+| **Cajera / Cajero** | `Cajero@Pulpazo.com` | `Cajero` | `{"full_name": "Cajera Principal", "role": "cajera"}` |
+| **Mesero** | `mesero@elpulpazo.com` | `mesero123` | `{"full_name": "Mesero Turno", "role": "mesero"}` |
+| **Cocina** | `cocina@elpulpazo.com` | `cocina123` | `{"full_name": "Jefe de Cocina", "role": "cocina"}` |
 
-### 3. Registro de Comandas y Checkout
-1. Entra al módulo de **Menú de Clientes**.
-2. Filtra por categoría o usa el buscador para localizar platillos (ej. Ceviche).
-3. Presiona "+ Agregar" para añadir alimentos al carrito de pedidos.
-4. Ve al **Carrito**, selecciona la mesa de los comensales y el método de pago (Efectivo/Tarjeta).
-5. Haz clic en **Proceder al Pago** y confirma el cobro.
-6. El sistema te mostrará el Ticket de Compra digital con su folio único, IVA del 16% calculado y total. Presiona "Entregar Ticket" para finalizar y vaciar el carrito.
+---
 
-### 4. Control de Inventario
-* En la sección **Inventario**, puedes monitorizar la materia prima.
-* Si el stock de un ingrediente (ej. Pulpo Fresco) cae por debajo del stock mínimo configurado, se mostrará en color rojo de alerta ("Bajo Stock").
-* Puedes aumentar o ajustar manualmente las cantidades del stock haciendo clic sobre el insumo e ingresando la cantidad recibida por los proveedores.
+### 4. Variables de Entorno (.env)
 
-### 5. Respaldo Local (Administrador)
-* El administrador puede realizar un respaldo manual de los datos y configuraciones del restaurante desde el menú administrativo haciendo clic en **"Exportar Datos"**. Esto descargará un archivo de datos en formato JSON para mayor seguridad.
+Crea el archivo `.env` en la raíz del proyecto copiando `.env.example`:
+
+```env
+VITE_SUPABASE_URL=https://TU-PROYECTO.supabase.co
+VITE_SUPABASE_ANON_KEY=tu-anon-key
+```
+
+### 5. Ejecución del Proyecto
+```bash
+npm install
+npm run dev
+```
+
+---
+
+## PARTE 2: Pruebas Automatizadas en Python (Pytest)
+
+El proyecto cuenta con una suite completa de pruebas unitarias e integración en Python:
+
+```bash
+python -m pytest -v tests/test_pulpazo_suite.py
+```
+
+Validaciones incluidas en el testsuite:
+1. Autenticación y RBAC para los 4 roles.
+2. Carrito de compras, cálculo de IVA 16% y descuentos por cupón.
+3. Modalidades de división de cuenta (Igual, Porcentaje, Manual).
+4. Flujo de cocina Kanban (Pendiente ➔ En preparación ➔ Listo).
+5. Descuento automático de inventario por recetas.
+6. Notificaciones de alertas de stock.

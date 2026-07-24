@@ -1,5 +1,5 @@
 # MANUAL DEL USUARIO
-## Sistema de Gestión de Restaurante: "El Pulpazo"
+## Sistema de Gestión de Restaurante: "El Pulpazo" (Versión 3.1)
 
 ---
 
@@ -8,17 +8,17 @@
 | Parámetro | Detalle |
 | :--- | :--- |
 | **Nombre del Sistema:** | El Pulpazo — Sistema de Gestión de Restaurante y Marisquería |
-| **Versión del Manual:** | v3.0 (Versión Final con Integración Supabase) |
-| **Fecha de Actualización:** | 22 de Julio de 2026 |
+| **Versión del Manual:** | v3.1 (Versión Mejorada con Cocina, Recetas, Descuentos y Reportes) |
+| **Fecha de Actualización:** | 23 de Julio de 2026 |
 | **Asignatura:** | Tópicos de calidad para el desarrollo de software (Actividad 5) |
 | **Equipo de Desarrollo:** | Lopez Estrella Brandon Oliver, Castro Nuñez Norberto Manuel, Pech Ake Santiago Asahel, May de los Santos Juan Jesus |
-| **Público Objetivo:** | Administradores de restaurante, cajeros, meseros y personal operativo. |
+| **Público Objetivo:** | Administradores de restaurante, cajeros, meseros, personal de cocina y operaciones. |
 
 ---
 
 ## 2. Introducción y Objetivo
 
-**El Pulpazo** es una aplicación web integral diseñada para optimizar la operación diaria de restaurantes y marisquerías. Permite administrar en tiempo real el plano de mesas, la toma de comandas, el cobro con desglose del IVA del 16%, el control de inventario con alertas de stock y la analítica ejecutiva. El objetivo de este manual es guiar de forma clara, sencilla y coloquial a cualquier miembro del personal en el uso correcto de la plataforma.
+**El Pulpazo v3.1** es una aplicación web integral diseñada para optimizar la operación diaria de restaurantes y marisquerías. Permite administrar en tiempo real el plano de mesas, la toma de comandas, la preparación en cocina estilo Kanban, el cobro con desglose del IVA del 16%, descuentos por cupón, división de cuentas, inventario automático por recetas y analítica ejecutiva. El objetivo de este manual es guiar de forma clara, sencilla y coloquial a cualquier miembro del personal en el uso correcto de la plataforma.
 
 ---
 
@@ -35,10 +35,13 @@
 9. [Módulos y Operaciones del Usuario](#9-módulos-y-operaciones-del-usuario)
    - [9.1 Plano Interactivo de Mesas](#91-plano-interactivo-de-mesas)
    - [9.2 Menú Digital y Tomar Pedido](#92-menú-digital-y-tomar-pedido)
-   - [9.3 Carrito, Cobros e IVA (Checkout)](#93-carrito-cobros-e-iva-checkout)
-   - [9.4 Control de Inventario e Insumos](#94-control-de-inventario-e-insumos)
-   - [9.5 Dashboard Ejecutivo y Métricas](#95-dashboard-ejecutivo-y-métricas)
-   - [9.6 Administración de Platillos](#96-administración-de-platillos)
+   - [9.3 Carrito, Cobros, IVA y División de Cuenta](#93-carrito-cobros-iva-y-división-de-cuenta)
+   - [9.4 Vista de Cocina Kanban](#94-vista-de-cocina-kanban)
+   - [9.5 Inventario Automático y Recetas](#95-inventario-automático-y-recetas)
+   - [9.6 Cupones y Descuentos](#96-cupones-y-descuentos)
+   - [9.7 Reportes de Ventas y Exportación CSV](#97-reportes-de-ventas-y-exportación-csv)
+   - [9.8 Dashboard Ejecutivo](#98-dashboard-ejecutivo)
+   - [9.9 Administración de Platillos](#99-administración-de-platillos)
 10. [Validaciones Importantes](#10-validaciones-importantes)
 11. [Atajos y Accesos Rápidos](#11-atajos-y-accesos-rápidos)
 12. [Solución de Problemas (Troubleshooting)](#12-solución-de-problemas-troubleshooting)
@@ -57,20 +60,19 @@
 | **Navegador Web:** | Google Chrome v100+, Microsoft Edge v100+, Safari v15+ o Mozilla Firefox v100+. |
 | **Sistema Operativo:** | Windows 10/11, macOS, Linux, Android (Tablet/Celular) o iOS/iPadOS. |
 | **Conexión a Internet:** | Estable (Mínimo 2 Mbps) para sincronización en la nube con Supabase. |
-| **Permisos de Cuenta:** | 🔑 Credenciales de Prueba por Defecto:<br>- **Administrador:** `admin@elpulpazo.com` / Contraseña: `admin@elpulpazo`<br>- **Cajera / Cajero:** `Cajero@Pulpazo.com` / Contraseña: `Cajero`<br>- **Mesero:** `mesero@elpulpazo.com` / Contraseña: `mesero123` |
+| **Permisos de Cuenta:** | Credenciales de usuario asignadas por el Administrador según su rol. |
 
 ---
 
 ## 5. Convenciones e Iconografía
 
-A lo largo de este manual se utilizan los siguientes símbolos para resaltar información clave:
-
 - ⚠️ **Advertencia:** Información crítica para prevenir errores operativos o pérdida de datos.
 - 💡 **Tip / Sugerencia:** Consejos útiles para trabajar de forma más rápida y eficiente.
-- 🔒 **Requiere Permisos:** Acción restringida únicamente para usuarios con rol de Administrador.
+- 🔒 **Requiere Permisos:** Acción restringida únicamente para usuarios con roles autorizados.
 - 🟢 **Mesa Libre:** Disponible para asignar a clientes en el comedor.
 - 🔴 **Mesa Ocupada:** Comanda activa con tiempo transcurrido.
 - 🟠 **Mesa Reservada:** Apartada para comensales futuros.
+- 🔔 **Notificación Flotante:** Alerta de stock bajo o comanda lista en cocina.
 
 ---
 
@@ -92,8 +94,8 @@ A lo largo de este manual se utilizan los siguientes símbolos para resaltar inf
 
 El sistema cuenta con una interfaz limpia en modo oscuro con acentos dorados (`#D4AF37`). Su estructura principal consta de:
 
-1. **Barra Lateral de Navegación (Sidebar):** Menú desplegable a la izquierda para cambiar entre los diferentes módulos (Mesas, Menú, Carrito, Inventario, Dashboard, Admin).
-2. **Encabezado Superior (Header):** Muestra las iniciales del usuario activo, su rol asignado (`Administrador`, `Cajera`, `Mesero`), el selector de Tema (Sol/Luna) y el botón de Cerrar Sesión.
+1. **Barra Lateral de Navegación (Sidebar):** Menú desplegable a la izquierda para cambiar entre los módulos autorizados según tu rol.
+2. **Encabezado Superior (Header):** Muestra las iniciales del usuario activo, su rol asignado (`Administrador`, `Cajera`, `Mesero`, `Cocina`), la campanita flotante de notificaciones, el selector de Tema (Sol/Luna) y el botón de Cerrar Sesión.
 3. **Área de Trabajo Central:** Pantalla dinámica donde se interactúa con los módulos.
 
 ![Vista Principal de Mesas](file:///c:/Users/santi/Downloads/pescaderia%20%281%29/pescaderia_V3/evidencias_screenshots/02_plano_de_mesas.png)
@@ -102,11 +104,14 @@ El sistema cuenta con una interfaz limpia en modo oscuro con acentos dorados (`#
 
 ## 8. Roles y Perfiles de Usuario
 
+El sistema cuenta con **4 roles operativos** estrictamente definidos:
+
 | Rol | Correo de Acceso | Contraseña | Vistas Visibles | Permisos y Capacidades |
 | :--- | :--- | :--- | :--- | :--- |
-| **👑 Administrador** | `admin@elpulpazo.com` | `admin@elpulpazo` | *Todas las pantallas* | Control total. Puede editar el mapa de mesas (mover/redimensionar), agregar platillos, ajustar inventario, ver métricas financieras y exportar respaldos. |
-| **💵 Cajera / Cajero** | `Cajero@Pulpazo.com` | `Cajero` | *Mesas, Pedidos, Carrito, Inventario* | Procesar cobros de comandas, calcular cambio/IVA, emitir tickets digitales, registrar gastos/abonos y consultar el stock. |
-| **🍽️ Mesero** | `mesero@elpulpazo.com` | `mesero123` | *Mesas, Menú, Carrito* | Consultar disponibilidad de mesas, tomar pedidos en el menú digital y enviar la comanda al carrito. |
+| **👑 Administrador** | `admin@elpulpazo.com` | `admin@elpulpazo` | *Todas las pantallas* | Control total. Edición del mapa de mesas, recetas, platillos, inventario, reportes CSV y finanzas. |
+| **💵 Cajera / Cajero** | `Cajero@Pulpazo.com` | `Cajero` | *Mesas, Pedidos, Carrito, Inventario, Corte, Descuentos* | Procesar cobros de comandas, aplicar cupones, corte de caja, gastos, abonos y consultar el stock. |
+| **🍽️ Mesero** | *`mesero@elpulpazo.com`* | `mesero123` | *Mesas, Menú, Carrito, Historial* | Consultar disponibilidad de mesas, tomar pedidos en el menú digital y enviar la comanda al carrito. |
+| **👨‍🍳 Cocina** | `cocina@elpulpazo.com` | `cocina123` | *Vista Cocina, Historial* | Pantalla Kanban de preparación de platillos (Pendiente, En preparación, Listo). |
 
 ---
 
@@ -121,7 +126,7 @@ El sistema cuenta con una interfaz limpia en modo oscuro con acentos dorados (`#
 1. Haz clic sobre cualquier mesa en el mapa.
 2. En el panel derecho aparecerá la información de la mesa (Nombre, Tipo, Estado, Tiempo).
 3. Presiona **`Reservar Mesa`** para cambiar su estado a Naranja, o **`Liberar Mesa`** para ponerla Verde cuando los clientes se retiren.
-4. 🔒 **Modo Edición (Solo Admin):** Haz clic en el botón `Editar Mesas`. Puedes arrastrar las mesas con el mouse o dedo, cambiar su forma (rectángulo/círculo), tamaño o rotación. Haz clic en `Salir de Edición` para guardar los cambios en Supabase.
+4. 🔒 **Modo Edición (Solo Admin):** Haz clic en `Editar Mesas`. Arrastra mesas en la cuadrícula de 900x450, cambia forma (rectángulo/círculo), tamaño o rotación y haz clic en `Salir de Edición`.
 
 ---
 
@@ -133,62 +138,91 @@ El sistema cuenta con una interfaz limpia en modo oscuro con acentos dorados (`#
 **Operación Paso a Paso:**
 1. Entra a la sección **`Tomar Pedido`**.
 2. Navega por las pestañas superiores: *Entradas, Platos Fuertes, Bebidas o Postres*.
-3. Utiliza la barra de búsqueda para encontrar un platillo por su nombre (ej. *"Ceviche"*).
+3. Utiliza la barra de búsqueda para encontrar un platillo por su nombre.
 4. Presiona el botón amarillo **`+ AGREGAR`** para mandar el plato al carrito.
 
 ---
 
-### 9.3 Carrito, Cobros e IVA (Checkout)
-**Propósito:** Confirmar la comanda, desglosar el impuesto y cobrar el pedido.
+### 9.3 Carrito, Cobros, IVA y División de Cuenta
+**Propósito:** Confirmar comanda, aplicar cupones, calcular impuestos, cobrar y dividir cuentas.
 
 ![Carrito de Compras](file:///c:/Users/santi/Downloads/pescaderia%20%281%29/pescaderia_V3/evidencias_screenshots/04_carrito_checkout.png)
 
 **Operación Paso a Paso:**
-1. Ve a la sección **`Pedido Actual`** (Carrito).
-2. **Selecciona la Mesa:** Elige en la lista desplegable la mesa correspondiente al cliente (ej. `Mesa A1`).
-3. **Selecciona el Método de Pago:** `Efectivo` o `Tarjeta`.
-4. Revisa los valores financieros:
-   - **Subtotal:** Suma de platillos.
-   - **IVA (16%):** Impuesto retenido automático.
-   - **Total:** Cantidad final a cobrar.
-5. Haz clic en **`Proceder al Pago`** y confirma. El sistema cambiará la mesa a color Rojo y desplegará el Ticket Digital con folio único.
+1. Ve a **`Pedido Actual`** (Carrito).
+2. Selecciona la Mesa (ej. `Mesa A1`) y el Método de Pago (`Efectivo` o `Tarjeta`).
+3. Opción para ingresar un **Cupón de Descuento** (ej. `MARISCO10`).
+4. Revisa Subtotal, Descuento, IVA 16% y Total.
+5. Presiona **`Proceder al Pago`**. Generará el Ticket Digital con folio único.
+6. **División de Cuenta:** Para cuentas mayores a $100, presiona el botón **`Dividir Cuenta`** para dividir el pago en partes iguales, porcentajes o montos manuales.
 
 ---
 
-### 9.4 Control de Inventario e Insumos
-**Propósito:** Monitorear las existencias de ingredientes de cocina y almacén.
+### 9.4 Vista de Cocina Kanban (NUEVO v3.1)
+**Propósito:** Monitorizar y cambiar el estado de preparación de los platillos en cocina.
+
+![Vista de Cocina Kanban](file:///c:/Users/santi/Downloads/pescaderia%20%281%29/pescaderia_V3/evidencias_screenshots/09_vista_cocina_kanban.png)
+
+**Operación Paso a Paso:**
+1. Ingresa como rol **Cocina**.
+2. Observa los pedidos en las 3 columnas: **`Pendiente`**, **`En Preparación`** y **`Listo`**.
+3. Haz clic en **`Iniciar Preparación`** para pasar la comanda a la segunda columna.
+4. Cuando el platillo esté cocinado, haz clic en **`Marcar Listo`**. Esto notificará automáticamente al mesero.
+
+---
+
+### 9.5 Inventario Automático y Recetas
+**Propósito:** Control de existencias con recetas y descuento automático.
 
 ![Control de Inventario](file:///c:/Users/santi/Downloads/pescaderia%20%281%29/pescaderia_V3/evidencias_screenshots/05_inventario_stock.png)
 
 **Operación Paso a Paso:**
-1. Ingresa a la vista **`Inventario`**.
-2. Observa la lista de materias primas (Pulpo, Camarón, Pescado, Limón, Aceite) y sus unidades.
-3. Si el stock actual es menor al stock mínimo, la etiqueta se tornará roja en estado **`Bajo Stock`**.
-4. Haz clic en un insumo para ajustar manualmente la cantidad recibida de proveedores y presiona Guardar.
+1. Entra a **`Inventario`**.
+2. Los ingredientes (Pulpo, Camarón, Pescado, Limón) se descuentan **automáticamente al vender un platillo** basándose en la receta registrada.
+3. Observa las etiquetas de estado: 🟢 *Saludable*, 🔴 *Bajo Stock* o *Agotado*.
 
 ---
 
-### 9.5 Dashboard Ejecutivo y Métricas
-**Propósito:** Consultar la salud financiera y comercial del restaurante.
+### 9.6 Cupones y Descuentos (NUEVO v3.1)
+**Propósito:** Administración de promociones y cupones de descuento.
+
+![Cupones y Descuentos](file:///c:/Users/santi/Downloads/pescaderia%20%281%29/pescaderia_V3/evidencias_screenshots/11_cupones_descuentos.png)
+
+**Operación Paso a Paso:**
+1. Ve a **`Descuentos`**.
+2. Haz clic en **`+ Nuevo Cupón`**, define el código (ej. `MARISCO10`), el tipo (% o monto fijo `$`) y el límite de usos.
+3. Activa o desactiva cupones con el switch.
+
+---
+
+### 9.7 Reportes de Ventas y Exportación CSV (NUEVO v3.1)
+**Propósito:** Análisis financiero detallado con descarga a Excel.
+
+![Reportes de Ventas](file:///c:/Users/santi/Downloads/pescaderia%20%281%29/pescaderia_V3/evidencias_screenshots/10_reportes_ventas.png)
+
+**Operación Paso a Paso:**
+1. Ingresa a **`Reportes`**.
+2. Selecciona el rango de fechas (Hoy, Esta semana, Este mes).
+3. Haz clic en el botón **`Exportar CSV`** para descargar el informe en formato de hoja de cálculo.
+
+---
+
+### 9.8 Dashboard Ejecutivo
+**Propósito:** Métricas en tiempo real.
 
 ![Dashboard Ejecutivo](file:///c:/Users/santi/Downloads/pescaderia%20%281%29/pescaderia_V3/evidencias_screenshots/06_dashboard_ejecutivo.png)
 
 **Operación Paso a Paso:**
-1. Entra a la sección **`Dashboard Ejecutivo`**.
-2. Revisa los KPIs principales: Ventas Totales del Día, Comandas Activas, Margen Operativo % y Ocupación %.
-3. Examina las gráficas interactivas de ventas por hora y la lista de platillos más vendidos.
+Revisa las Ventas Totales ($), Comandas Activas, Margen Operativo % y Ocupación de Mesas %.
 
 ---
 
-### 9.6 Administración de Platillos
-**Propósito:** Mantenimiento del catálogo de alimentos.
+### 9.9 Administración de Platillos
+**Propósito:** Catálogo de platillos.
 
-![Panel Administración](file:///c:/Users/santi/Downloads/pescaderia%20%281%29/pescaderia_V3/evidencias_screenshots/07_panel_administracion.png)
+![Panel Admin](file:///c:/Users/santi/Downloads/pescaderia%20%281%29/pescaderia_V3/evidencias_screenshots/07_panel_administracion.png)
 
-**Operación Paso a Paso:**
-1. Ingresa a **`Panel Admin`**.
-2. Haz clic en **`+ Agregar Nuevo Platillo`**, completa el nombre, precio, categoría e imagen.
-3. Utiliza los switches para marcar si un plato está disponible u ocultarlo del menú.
+Haz clic en `+ Agregar Nuevo Platillo`, completa la información y guarda los cambios.
 
 ---
 
@@ -196,11 +230,12 @@ El sistema cuenta con una interfaz limpia en modo oscuro con acentos dorados (`#
 
 | Campo / Módulo | Regla de Negocio | Ejemplo / Resultado |
 | :--- | :--- | :--- |
-| **Mesa en Checkout** | Obligatorio seleccionar una mesa antes de cobrar. | Si no se elige mesa, el botón "Proceder al Pago" no se procesará. |
-| **Cantidad en Carrito** | No se permiten cantidades negativas o cero. | El botón `-` elimina el ítem si llega a 0. |
-| **Cálculo de IVA** | Aplica tasa fija del 16% sobre el subtotal. | Subtotal = $100.00 → IVA = $16.00 → Total = $116.00. |
-| **Nivel de Stock** | Alerta roja automática al caer el stock. | Stock Actual (1.2 kg) < Stock Mínimo (2.0 kg) → Alerta "Bajo Stock". |
-| **Edición de Plano** | Solo accesible con rol de Administrador. | Meseros y Cajeras no ven el botón "Editar Mesas". |
+| **Mesa en Checkout** | Obligatorio seleccionar una mesa antes de cobrar. | Si no se elige mesa, no se procesa el pago. |
+| **Cantidad en Carrito** | No se permiten cantidades negativas o cero. | El botón `-` elimina el ítem al llegar a 0. |
+| **Cálculo de IVA** | Aplica tasa fija del 16% sobre el subtotal neto. | Subtotal = $100.00 → IVA = $16.00 → Total = $116.00. |
+| **Cupones** | Se descuenta antes del cálculo de IVA. | Subtotal $200 - Cupón $20 = $180 netos + $28.80 IVA. |
+| **Nivel de Stock** | Alerta roja automática al caer el stock. | Stock Actual (1.2 kg) < Stock Mínimo (2.0 kg) → "Bajo Stock". |
+| **Acceso a Rutas** | Restringido estrictamente por el rol asignado. | El rol Cocina solo accede a `/cocina` e `/historial`. |
 
 ---
 
@@ -208,9 +243,10 @@ El sistema cuenta con una interfaz limpia en modo oscuro con acentos dorados (`#
 
 | Acción | Atajo / Acceso Rápido |
 | :--- | :--- |
-| **Cambiar Tema Visual** | Hacer clic en el icono Sol/Luna en el encabezado superior. |
+| **Campanita Notificaciones** | Hacer clic en la campanita flotante del header. |
+| **Cambiar Tema Visual** | Hacer clic en el icono Sol/Luna en el encabezado. |
 | **Colapsar / Abrir Menú** | Hacer clic en el icono de Hamburguesa (≡) junto al logo. |
-| **Búsqueda Rápida de Menú** | Usar la barra de búsqueda en la pestaña *Tomar Pedido*. |
+| **Búsqueda de Platillos** | Usar la barra de búsqueda en 'Tomar Pedido'. |
 | **Cerrar Sesión** | Hacer clic en el icono de salir en la esquina superior derecha. |
 
 ---
@@ -219,57 +255,54 @@ El sistema cuenta con una interfaz limpia en modo oscuro con acentos dorados (`#
 
 | Síntoma | Causa Probable | Solución Recomendada |
 | :--- | :--- | :--- |
-| No puedo iniciar sesión ("Correo o contraseña incorrectos"). | Credenciales mal escritas o usuario no registrado en Supabase Auth. | Verifica mayúsculas o solicita al Administrador revisar tu usuario. |
-| Las mesas cambiadas de lugar se regresaron a su sitio. | No se presionó "Salir de Edición" para guardar en la base de datos. | Realiza los cambios en Modo Edición y presiona siempre "Salir de Edición". |
-| Los platillos no cargan en el menú. | Pérdida temporal de conexión a internet. | Revisa tu red y presiona `F5` para recargar la página. |
-| No veo el botón de Inventario o Dashboard. | Iniciaste sesión con rol de Mesero. | Los meseros tienen acceso limitado. Inicia sesión con cuenta Admin. |
+| No puedo iniciar sesión ("Credenciales incorrectas"). | Correo o contraseña mal escritos. | Revisa mayúsculas/minúsculas o contacta al Administrador. |
+| Las mesas no guardaron cambios. | No se presionó "Salir de Edición". | Presiona siempre "Salir de Edición" para guardar en Supabase. |
+| Los platillos no cargan. | Pérdida temporal de conexión a internet. | Revisa tu red y presiona F5 para recargar. |
+| Me aparece "Acceso Restringido". | Intentaste entrar a una vista no permitida por tu rol. | Inicia sesión con la cuenta del rol adecuado (ej. Admin). |
 
 ---
 
 ## 13. Preguntas Frecuentes (FAQ)
 
-* **¿Puedo exportar un respaldo de la base de datos?**
-  Sí. En la vista de administración, haz clic en el botón **`Exportar Datos`** para descargar un archivo comprimido JSON con la copia de seguridad.
-* **¿El IVA se calcula automáticamente?**
-  Sí, la aplicación calcula la tasa oficial del 16% sobre el subtotal de cada orden y la imprime en el ticket.
-* **¿La aplicación funciona en tablets o teléfonos?**
-  Sí, el diseño es responsivo y se adapta a pantallas táctiles de iPads, tablets Android o celulares.
+* **¿Cómo divido una cuenta entre varias personas?**
+  En la pantalla de pago exitoso del Carrito (para cuentas mayores a $100), presiona "Dividir Cuenta" y elige entre partes iguales, porcentaje o monto manual.
+* **¿Los platillos descuentan ingredientes automáticamente?**
+  Sí, al confirmar un pedido, el sistema descuenta los gramos/litros configurados en la receta del platillo.
+* **¿Puedo exportar reportes a Excel?**
+  Sí. En la sección de Reportes, haz clic en "Exportar CSV".
 
 ---
 
 ## 14. Buenas Prácticas
 
-1. 🔒 **Cierra sesión al retirarte:** Siempre haz clic en "Cerrar Sesión" al finalizar tu turno de trabajo para evitar accesos no autorizados.
-2. 💡 **Verifica el stock al iniciar el día:** Revisa la pantalla de Inventario al abrir la marisquería para detectar insumos críticos a comprar.
-3. ⚠️ **Asigna siempre la mesa correcta:** Asegúrate de vincular la comanda a la mesa exacta para mantener el plano de mesas actualizado.
-4. 💡 **Mantén actualizado el catálogo:** Marca como "No Disponible" los platillos cuyos ingredientes se hayan agotado en cocina.
+1. 🔒 **Cierra sesión al retirarte de tu turno.**
+2. 💡 **Revisa la campanita de notificaciones** para atender alertas de stock.
+3. 👨‍🍳 **Mantén actualizada la pantalla de Cocina** pasando pedidos a "Listo" para avisar a los meseros.
+4. ⚠️ **Verifica los cupones** antes de aplicarlos en caja.
 
 ---
 
 ## 15. Seguridad y Confidencialidad de Datos
 
-La aplicación utiliza la infraestructura en la nube de **Supabase (PostgreSQL)**. Las contraseñas se almacenan de forma cifrada mediante algoritmos bcrypt. Las tablas de base de datos implementan políticas de seguridad por fila (Row Level Security - RLS), asegurando que cada operación esté protegida y ningún usuario sin autorización modifique datos financieros sensibles.
+La plataforma utiliza Supabase (PostgreSQL en la nube). Las contraseñas están cifradas con bcrypt y las tablas implementan políticas Row Level Security (RLS) por rol para proteger la información sensible.
 
 ---
 
 ## 16. Canal de Soporte y Contacto
 
-Si experimentas algún fallo técnico que este manual no resuelva, puedes contactar al equipo de desarrollo:
-
-- **Equipo de Soporte:** López Estrella B. O., Castro Nuñez N. M., Pech Ake S. A., May de los Santos J. J.
-- **Correo Electrónico de Contacto:** `soporte@elpulpazo.com`
+- **Equipo de Soporte:** Lopez Estrella B. O., Castro Nuñez N. M., Pech Ake S. A., May de los Santos J. J.
+- **Correo de Contacto:** `soporte@elpulpazo.com`
 - **Atención:** Lunes a Domingo de 8:00 AM a 10:00 PM.
 
 ---
 
 ## 17. Glosario y Conclusiones
 
-### Glosario de Términos:
-* **Supabase:** Plataforma de base de datos PostgreSQL en la nube y autenticación.
-* **KPI (Key Performance Indicator):** Indicador clave de rendimiento financiero o comercial.
-* **SVG:** Formato gráfico vectorial utilizado para renderizar el mapa interactivo de mesas.
-* **RLS (Row Level Security):** Mecanismo de seguridad a nivel de fila en base de datos.
-* **Checkout:** Proceso de confirmación y cobro de un pedido.
+### Glosario:
+* **RBAC (Role-Based Access Control):** Control de acceso basado en roles de usuario.
+* **Kanban:** Sistema visual de columnas (Pendiente, En preparación, Listo) para gestión de tareas/pedidos.
+* **Supabase:** Backend as a Service con PostgreSQL en la nube.
+* **CSV:** Archivo de texto plano separado por comas compatible con Microsoft Excel.
 
 ### Conclusión:
-El manual del usuario de **El Pulpazo** proporciona una guía completa y estructurada para garantizar que todo el personal operativo maneje el sistema con fluidez. La combinación de una interfaz intuitiva, un diseño adaptable y una arquitectura robusta en la nube permite llevar un control impecable del restaurante, mejorando la atención al cliente y la rentabilidad del negocio.
+El manual del usuario de **El Pulpazo v3.1** garantiza que todo el personal operativo maneje la plataforma con fluidez, llevando un control impecable del comedor, la cocina, las finanzas y el inventario.
